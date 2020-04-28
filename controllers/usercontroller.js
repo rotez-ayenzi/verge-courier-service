@@ -29,10 +29,10 @@ exports.isAdmin = async (req,res,next)=>{
     
 }
 exports.isUser = async (req,res,next)=>{
-    const {id} = req.body
+    const {user_id} = req.body
     const queryObject={
         text: queries.selectUserById,
-        values:[id]
+        values:[user_id]
     }
     try{
         const {rowCount, rows} = await db.query(queryObject)
@@ -48,7 +48,7 @@ exports.isUser = async (req,res,next)=>{
             }
         
     }catch(error){
-        res.status(500).json({message:"error creating parcel order"})
+        res.status(500).json({message:"error veryfying user"})
     }
 }
 exports.signUpUser = async (req, res, next) => {
@@ -71,15 +71,15 @@ exports.signUpUser = async (req, res, next) => {
         })
     }
     const hashedPassword = hashPassword(password)
-    const isadmin = 0;
+    const is_admin = 0;
     const queryObject = {
         text: queries.signUpUserQuery,
-        values: [first_name, last_name, email, hashedPassword, state, created_at, created_at, isadmin]
+        values: [first_name, last_name, email, hashedPassword, state, created_at, created_at, is_admin]
     };
     try {
         const { rows } = await db.query(queryObject);
         const dbresponse = rows[0];
-        const tokens = generateToken(dbresponse.id, dbresponse.first_name, dbresponse.last_name, dbresponse.email, dbresponse.state);
+        const tokens = generateToken(dbresponse.id, dbresponse.first_name, dbresponse.last_name, dbresponse.email, dbresponse.state,dbresponse.is_admin);
         const data = {
             token: tokens,
             dbresponse
@@ -92,6 +92,48 @@ exports.signUpUser = async (req, res, next) => {
         next(error);
     }
 }
+exports.signUpAdmin = async (req, res, next) => {
+    const date = new Date();
+    const created_at = moment(date).format('YYYY-MM-DD HH:mm:ss');
+    const { first_name, last_name, email, password, state } = req.body;
+    if (!first_name || !last_name || !email || !state || !password) {
+        return res.status(400).json({
+            message: "Please fill all fields",
+        });
+    }
+    if (!isValidEmail(email)) {
+        return res.status(400).json({
+            message: "please put in a valid email"
+        })
+    }
+    if (!validatePassword(password)) {
+        return res.status(400).json({
+            message: "Invalid Password"
+        })
+    }
+    const hashedPassword = hashPassword(password)
+    const is_admin = 1;
+    const queryObject = {
+        text: queries.signUpUserQuery,
+        values: [first_name, last_name, email, hashedPassword, state, created_at, created_at, is_admin]
+    };
+    try {
+        const { rows } = await db.query(queryObject);
+        const dbresponse = rows[0];
+        const tokens = generateToken(dbresponse.id, dbresponse.first_name, dbresponse.last_name, dbresponse.email, dbresponse.state,dbresponse.is_admin);
+        const data = {
+            token: tokens,
+            dbresponse
+        }
+        res.status(201).json({
+            message: "User Created Successfully", data
+        })
+    } catch (error) {
+        console.log(error)
+        next(error);
+    }
+}
+
 
 exports.logInUser = async (req,res,next) =>{
     const {email,password} = req.body
@@ -128,11 +170,10 @@ try {
         })
       }
       
-      const tokens = generateToken(dbresponse.id, dbresponse.first_name, dbresponse.last_name, dbresponse.email, dbresponse.state);
+      const tokens = generateToken(dbresponse.id, dbresponse.first_name, dbresponse.last_name, dbresponse.email, dbresponse.state,dbresponse.is_admin);
       const data = {
         token: tokens,
-    
-        dbresponse
+      dbresponse
     }
     res.status(201).json({
         message: "User logged in Successfully", data

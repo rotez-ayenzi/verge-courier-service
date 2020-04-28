@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const courier = require("./dbRoute")
 
 let app = express();
-port = 5000;
+port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));

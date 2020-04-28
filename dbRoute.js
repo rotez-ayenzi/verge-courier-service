@@ -3,22 +3,22 @@ const router = express.Router();
 const userController = require("./controllers/usercontroller");
 const parcelordercontroller = require("./controllers/parcelordercontroller")
 const verifyUserToken = require("./Validation/validations_bcrypt_jwt")
-const { signUpUser, logInUser, isAdmin } = userController
-const {placeParcelOrder, getUserParcelByUserId, getUserParcelById, updateDestinationByUserId, deleteParcelById, updateLocationByIsAdmin} = parcelordercontroller
-const {verifyToken} = verifyUserToken
+const { signUpUser, logInUser, isAdmin, isUser, signUpAdmin } = userController
+const {placeParcelOrder, getUserParcelByUserId, getUserParcelById, updateDestinationByUserId, deleteParcelById, updateLocationByIsAdmin,getAllParcelByAdmin, updateStatusByIsAdmin} = parcelordercontroller
+const {verifyToken,verifyTokenAdmin} = verifyUserToken
 
 
+router.post('/auth/admin', signUpAdmin);
 router.post('/auth/signup', signUpUser);
 router.post('/auth/login', logInUser);
-router.post('/parcel', verifyToken, placeParcelOrder);
+router.post('/parcel', verifyToken, isUser, placeParcelOrder);
 router.get('/parcel', getUserParcelByUserId);
 router.get('/parcel/:id', getUserParcelById);
 router.put('/parcel/destination/change/:id', updateDestinationByUserId)
 router.delete('/parcel/cancel/:id', deleteParcelById)
-router.put('/parcel/location/change/:id', isAdmin, updateLocationByIsAdmin)
+router.put('/parcel/location/change/:user_id', verifyTokenAdmin, updateLocationByIsAdmin)
+router.get('/parcels',verifyToken, getAllParcelByAdmin)
+router.put('/parcel/status/change/:id',updateStatusByIsAdmin)
 
-
-
-router.get('/:id', isAdmin)
 module.exports = router
     

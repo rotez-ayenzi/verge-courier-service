@@ -20,16 +20,16 @@ const isValidEmail = (email) => {
     } return true;
   };
 
-  const generateToken = ( id, first_name, last_name, email,state) =>{
+  const generateToken = ( id, first_name, last_name, email,state, is_admin) =>{
     const key = process.env.SECRET_KEY;
-    const token = jwt.sign({ id, email, first_name, last_name, state }, key, { expiresIn: '1h' });
+    const token = jwt.sign({ id, email, first_name, last_name, state,is_admin }, key, { expiresIn: '1h' });
     return token;
   }
 
   const verifyToken = async (req, res, next)=>{
     const { token } = req.headers;
     if(!token){
-        return res.status(400).send("token is not provided")
+        return res.status(403).send("token is not provided")
     }
     try{
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -43,12 +43,33 @@ const isValidEmail = (email) => {
         next();
     }catch(error){
         console.log(error)
-        return res.status(400).send("Authentication Failed")
+        return res.status(401).send("Authentication Failed")
     }
 }
-
-
-
+const verifyTokenAdmin = async (req, res, next) => {
+  const { token } = req.headers;
+  if (!token) {
+      return res.status(400).send("token is not provided")
+  }
+  try {
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      req.user = {
+          id: decoded.id,
+          email: decoded.email,
+          first_name: decoded.first_name,
+          last_name: decoded.last_name,
+          is_admin: decoded.is_admin,
+          state: decoded.state
+      }
+      if (decoded.is_admin === false) {
+          return res.status(400).send("You are not Authorize")
+      }
+      next();
+  } catch (error) {
+      console.log(error)
+      return res.status(400).send("Authentication Failed")
+  }
+}
   const comparePassword = (hashedPassword, password) => {
     return bcrypt.compareSync(password, hashedPassword);
   };
@@ -59,5 +80,6 @@ module.exports = {
     validatePassword,
     generateToken,
     comparePassword,
-    verifyToken
+    verifyToken,
+    verifyTokenAdmin
 }
