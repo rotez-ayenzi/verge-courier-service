@@ -44,6 +44,7 @@ try{
     }
 }
 catch(error){
+    console.log(error)
     res.status(400).json({message:"error finding username"})
 }
 }
@@ -104,19 +105,29 @@ exports.updateDestinationByUserId = async (req,res)=>{
         text: queries.updateDestinationById,
         values:[ destination, updated_at, id]
     }
+    const queryObject1 = {
+        text: queries.getUserOrderById,
+        values:[id]
+    }
     try {
-        const{rowCount} = await db.query(queryObject)
+        const {rowCount,rows} = await db.query(queryObject1)
         if(rowCount === 0){
             return res.status(500).json({message:"parcel with id not found"})
         }
         if(rowCount > 0 && rows[0].status == "pending"){
+            const {rowCount} = await db.query(queryObject);
+            if(rowCount>0){
             return res.status(200).json({message:"parcel updated successfully"})
         }
-        if(rowCount > 0){
-            return res.status(500).json({message:"error updating parcel"})
+        else{
+            return res.status(400).json({message:"not updated"})
         }
+    }
+    else{
+        return res.status(400).json({message:"cannot update a delivered parcel"})
+    }
     } catch (error) {
-        res.status(400).json({message:"error finding id"})
+        res.status(400).json({message:" an error occurred"})
     }
 }
 
@@ -134,6 +145,7 @@ exports.updateLocationByIsAdmin = async (req,res)=>{
         text: queries.updateLocationByAdmin,
         values:[ location, updated_at, user_id]
     }
+    
     try {
         const{rowCount} = await db.query(queryObject)
         if(rowCount === 0){

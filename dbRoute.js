@@ -12,13 +12,12 @@ router.post('/auth/admin', signUpAdmin);
 router.post('/auth/signup', signUpUser);
 router.post('/auth/login', logInUser);
 router.post('/parcel', verifyToken, isUser, placeParcelOrder);
+router.get('/parcel/all',verifyTokenAdmin, getAllParcelByAdmin)
 router.get('/parcel', getUserParcelByUserId);
 router.get('/parcel/:id', getUserParcelById);
 router.put('/parcel/destination/change/:id', updateDestinationByUserId)
 router.delete('/parcel/cancel/:id', deleteParcelById)
+router.put('/parcel/status/change/:id',verifyTokenAdmin, updateStatusByIsAdmin)
 router.put('/parcel/location/change/:user_id', verifyTokenAdmin, updateLocationByIsAdmin)
-router.get('/parcels',verifyToken, getAllParcelByAdmin)
-router.put('/parcel/status/change/:id',updateStatusByIsAdmin)
-
 module.exports = router
     
