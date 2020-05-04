@@ -96,7 +96,7 @@ exports.getUserParcelById = async (req, res) => {
             return res.status(200).json({
                 status: 'success',
                 code: 200,
-                message: "This is your order by id", data: rows
+                message: "This is your order by id", data: rows[0]
             }) // if u dont put d zero, it will show an array
         }
         if (rowCount === 0) {
