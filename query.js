@@ -35,7 +35,7 @@ const queries = {
     UPDATE parcel SET destination=($1), updated_at = ($2) WHERE id =($3) AND user_id=($4) RETURNING *`,
     updateTypeByAdmin: `
     UPDATE users SET admin_type=($1) WHERE id=($2)`,
-    updateAdminType:`
+    updateTypeByAdmin:`
     UPDATE users SET admin_type=($1),updated_at=($2) WHERE id=($3)`,
     deleteParcelByUserId: `
     DELETE FROM parcel WHERE id = ($1)`,
