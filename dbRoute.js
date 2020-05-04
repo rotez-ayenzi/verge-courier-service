@@ -4,7 +4,7 @@ const userController = require("./controllers/usercontroller");
 const parcelordercontroller = require("./controllers/parcelordercontroller")
 const superadmincontroller = require("./controllers/superadmincontroller")
 const verifyAllToken = require("./Validation/validations_bcrypt_jwt")
-const { signUpUser, logInUser, isUser, signUpAdmin } = userController
+const { signUpUser, logInUser, isUser, signUpAdmin,updateAdminType } = userController
 const {updateUserBySuperAdmin} = superadmincontroller
 const {placeParcelOrder, getUserParcelByUserId, getUserParcelById, updateDestinationByUserId, deleteParcelById, updateLocationByIsAdmin,getAllParcelByAdmin, updateStatusByIsAdmin} = parcelordercontroller
 const {verifyToken,verifyTokenAdmin, verifyTokenSuperAdmin} = verifyAllToken
@@ -21,6 +21,7 @@ router.put('/parcel/destination/change/:id',verifyToken, updateDestinationByUser
 router.put('/parcel/cancel/:id',verifyToken, deleteParcelById)
 router.put('/parcel/status/change/:id', verifyTokenAdmin, updateStatusByIsAdmin)
 router.put('/parcel/location/change/:id', verifyTokenAdmin, updateLocationByIsAdmin)
+router.put('/parcel/superadmintype/change/:id', updateAdminType)
 router.put('/parcel/admintype/change/:id', verifyTokenSuperAdmin, updateUserBySuperAdmin)
 module.exports = router
     
