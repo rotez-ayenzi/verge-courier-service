@@ -126,7 +126,6 @@ exports.signUpUser = async (req, res, next) => {
             message: "User Created Successfully", data
         })
     } catch (error) {
-        console.log(error)
         next(error);
     }
 }
@@ -173,7 +172,6 @@ exports.signUpAdmin = async (req, res, next) => {
             message: "User Created Successfully", data
         })
     } catch (error) {
-        console.log(error)
         next(error);
     }
 }
@@ -228,7 +226,6 @@ exports.logInUser = async (req, res, next) => {
             message: "User logged in Successfully", data
         })
     } catch (error) {
-        console.log(error)
         next(error);
     }
 }
@@ -255,7 +252,6 @@ exports.updateAdminType = async (req, res) => {
             return res.status(200).json({ message: "parcel admintype updated successfully" })
         }
     } catch (error) {
-        console.log(error)
         res.status(400).json({ message: "error finding id" })
     }
 }

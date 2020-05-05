@@ -38,14 +38,19 @@ const verifyToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     req.user = decoded
-    console.log(req.user)
+    if (decoded.admin_type !== "user") {
+      return res.status(400).json({
+        status: 'failure',
+        code: 400,
+        message: "You are not Authorised to Perform this Operation"
+      })
+    }
     next();
   } catch (error) {
-    console.log(error)
     return res.status(401).json({
       status: 'failure',
       code: 400,
-      message: "You are not authorised"
+      message: "Authentication failed"
     })
   }
 }
@@ -70,7 +75,6 @@ const verifyTokenAdmin = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.log(error)
     return res.status(400).json({
       status: 'failure',
       code: 400,
@@ -99,7 +103,6 @@ const verifyTokenSuperAdmin = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.log(error)
     return res.status(400).json({
       status: 'failure',
       code: 400,

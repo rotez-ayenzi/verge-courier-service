@@ -68,7 +68,6 @@ exports.getUserParcelByUserId = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
         res.status(400).json({
             status: 'failure',
             code: 400,
@@ -108,7 +107,6 @@ exports.getUserParcelById = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
         res.status(400).json({
             status: 'failure',
             code: 400,
@@ -117,7 +115,6 @@ exports.getUserParcelById = async (req, res) => {
     }
 }
 exports.getAllParcelByAdmin = async (req, res) => {
-    console.log("got here")
     const queryObject = {
         text: queries.getAllParcelOrder,
     }
@@ -285,7 +282,6 @@ exports.updateLocationByIsAdmin = async (req, res) => {
             })
         }
     } catch (error) {
-        console.log(error)
         res.status(400).json({
             status: 'failure',
             code: 400,
@@ -296,7 +292,7 @@ exports.updateLocationByIsAdmin = async (req, res) => {
 exports.deleteParcelById = async (req, res) => {
 
     const { id } = req.params;
-    // const user_id = req.user.id
+
     const queryObject = {
         text: queries.getStatus,
         values: [id]
@@ -307,7 +303,6 @@ exports.deleteParcelById = async (req, res) => {
     }
     try {
         let { rowCount, rows } = await db.query(queryObject);
-        console.log(rows)
         if (rowCount === 0) {
             return res.status(400).json({
                 status: 'failure',
@@ -316,7 +311,6 @@ exports.deleteParcelById = async (req, res) => {
             })
         }
         if (rowCount > 0 && rows[0].status === 'pending') {
-            console.log(queryObject1)
             const { rowCount } = await db.query(queryObject1);
             if (rowCount > 0) {
                 res.status(200).json({
@@ -347,7 +341,6 @@ exports.deleteParcelById = async (req, res) => {
             })
         }
     } catch (error) {
-        console.log(error)
         res.status(500).json({
             status: 'failure',
             code: 400,
@@ -422,7 +415,6 @@ exports.updateStatusByIsAdmin = async (req, res, next) => {
                 })
             }
         } catch (error) {
-            console.log(error)
             res.status(400).json({
                 status: 'failure',
                 code: 400,
